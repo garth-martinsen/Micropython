@@ -15,8 +15,8 @@ sep = const(", ")
 class TouchPin:
     ''' A TouchPin is sensitive to touch by human. A touch causes the adc count to change radically.
     Two states are used: CALIBRATE , DETECT. During CALIBRATE, all samples are used to establish bounds ( lb, ub).
-    During DETECT state, any adc less than lb is a TOUCH, any inbounds samples go to improve bounds in calibrate(),
-    any above ub are discarded as outliers.  CALIBRATE -> DETECT  when sample count is greater than 25. '''
+    During DETECT state, any adc outside of bounds (lb,ub) is a TOUCH, any adc which is in bounds  goes to calibrate() to improve bounds.
+    State transitions from  CALIBRATE -> DETECT  when sample count is greater than 25. '''
 
     def __init__(self, id):
         self._id = id
