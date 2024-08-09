@@ -55,12 +55,12 @@ class TouchPin:
         ''' Calibration is done until sample size > 25, and also for NON-TOUCH, bounded measurements, after sample size > 25'''
         self._cnt +=1
         if self._cnt >2:
-            mean= self._sum_samples / self._cnt
+            mean= math.floor(self._sum_samples / self._cnt)
             sd = math.sqrt(self._sum_variants/(self._cnt -1))
-            self._lb  = mean - 0.9* sd
-            self._ub = mean + 0.9 * sd
+            self._lb  = math.floor(mean - 0.9* sd)
+            self._ub = math.floor(mean + 0.9 * sd)
             self._sum_samples += adc
-            self._sum_variants += (mean-adc)**2
+            self._sum_variants += math.floor((mean-adc)**2)
          
             print("id-cnt-adc-mean-lb-ub: ", self._id, sep, self._cnt, sep, self._adc,sep, mean, sep, self._lb, sep, self._ub)
 
@@ -68,7 +68,7 @@ class TouchPin:
     def detect(self, adc):
         ''' bounds are at mean -2*sd and mean+2*sd. If bounds are exceeded,  it is a TOUCH. Observation shows that a 65535 or a zero could trigger
 a TOUCH so testing for anything outside of the bounds works well... No false TOUCHES'''
-        mean = self._sum_samples/self._cnt
+        mean = math.floor(self._sum_samples/self._cnt)
         if adc < self._lb or adc > self._ub:
             print("     Touch!:  id-cnt-adc-mean-lb-ub: ", self._id, sep, self._cnt, sep, self._adc, sep, mean, sep, self._lb, sep, self._ub)       #do not pass adc to calibrate(). It is an outlier
         else: 
