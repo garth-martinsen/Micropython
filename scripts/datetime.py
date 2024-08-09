@@ -19,6 +19,6 @@ def dts_string(tpl):
 rtc=RTC()
 now =rtc.datetime()
 print(now)
-for t in now:
-    print(t)
+# for t in now:
+#     print(t)
 print(dts_string(now))
