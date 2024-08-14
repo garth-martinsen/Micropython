@@ -18,7 +18,7 @@ class TouchPin:
     During DETECT state, any adc outside of bounds (lb,ub) is a TOUCH, any adc which is in bounds  goes to calibrate() to improve bounds.
     State transitions from  CALIBRATE -> DETECT  when sample count is greater than 25. '''
 
-    def __init__(self, id):
+    def __init__(self, id, sb):
         self._id = id
         self._pin = ADC(Pin(id))
         self._lb= 7000
@@ -27,8 +27,9 @@ class TouchPin:
         self._adc = 0
         self._state = CALIB
         self._cnt =0
-        self._sum_samples =2000
-        self._sum_variants = 0
+        self._smooth_sz=sb
+        self._samples =[]
+        self._deviations = []
         
     
     def read(self):
@@ -44,18 +45,23 @@ class TouchPin:
         if type(adc) != int:
             print("Type: ", type(adc))
             return
-        if self._cnt < 25:
+        if self._cnt < self._smooth_sz:
             self._state = CALIB
             self.calibrate(adc)
         else:
             self._state = DETECT
             self.detect(adc)
+      
+    def smoothBy(self, n):
+        if self._cnt > self._smooth_sz:
+            self._samples.pop(-(n+1))
+        return sum(self._samples)/len(self._samples)
         
     def calibrate(self, adc):
         ''' Calibration is done until sample size > 25, and also for NON-TOUCH, bounded measurements, after sample size > 25'''
         self._cnt +=1
         if self._cnt >2:
-            mean= math.floor(self._sum_samples / self._cnt)
+            mean= smooth_by(self._smooth_sz)
             sd = math.sqrt(self._sum_variants/(self._cnt -1))
             self._lb  = math.floor(mean - 0.9* sd)
             self._ub = math.floor(mean + 0.9 * sd)
