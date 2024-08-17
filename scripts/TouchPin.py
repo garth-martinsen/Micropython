@@ -27,7 +27,7 @@ class TouchPin:
         self._adc = 0
         self._state = CALIB
         self._cnt =0
-        self._smooth_sz=sb
+        self._smooth_by=sb
         self._samples =[]
         self._variants = []
         
@@ -41,26 +41,26 @@ class TouchPin:
         '''averages over the last n samples'''
         self._samples.append(adc)
         if len(self._samples) > n:
-            self._samples.pop(0)                                       #when list holds 1 more than _smooth_sz, remove the first element to keep the list size at _smooth_sz
+            self._samples.pop(0)                                       #when list holds 1 more than _smooth_by, remove the first element to keep the list size at _smooth_by
         mean = sum(self._samples)/len(self._samples)
         # if less than 2 samples then just assign sd=250; guess!
         sd=   250
         self._variants.append((mean -adc)*(mean-adc))
         if len(self._variants) > n:
-            self._variants.pop(0)                                       #when list holds 1 more than _smooth_sz, remove the first element to keep the list size at _smooth_sz
+            self._variants.pop(0)                                       #when list holds 1 more than _smooth_by, remove the first element to keep the list size at _smooth_by
         if len(self._variants) > 2:
             sd = math.sqrt(sum(self._variants)/(len(self._variants) -1))
                 
         return math.floor(mean), math.floor(sd)           # return as truncated ints because adc counts are ints.
                 
     def handle_sample(self, adc):
-        '''Samples are handled in one of  two states: {CALIBRATE, DETECT}. The state transistions from CALIBRATE-> DETECT when count >_smooth_sz'''
+        '''Samples are handled in one of  two states: {CALIBRATE, DETECT}. The state transistions from CALIBRATE-> DETECT when count >_smooth_by'''
         self._adc = adc
       
         if type(adc) != int:
             print("Type: ", type(adc))
             return
-        if self._cnt < self._smooth_sz:
+        if self._cnt < self._smooth_by:
             self._state = CALIB
             self.calibrate(adc)
         else:
@@ -69,11 +69,11 @@ class TouchPin:
       
  
     def calibrate(self, adc):
-        ''' Calibration is complete when sample size > _smooth_sz , and also after _cnt > _smooth_sz,  for samples within bounds (ie: NON-TOUCH samples)  '''
+        ''' Calibration is complete when sample size > _smooth_by , and also after _cnt > _smooth_by,  for samples within bounds (ie: NON-TOUCH samples)  '''
         self._cnt +=1
        
         if self._cnt >2:
-            mean, sd = self.smooth(self._smooth_sz, adc)
+            mean, sd = self.smooth(self._smooth_by, adc)
             self._lb  = math.floor(mean - 3.5* sd)                                             #bounds: samples > abs(mean +- 3.5 sd) , will be branded as TOUCHes
             self._ub = math.floor(mean + 3.5 * sd)
             print("id-cnt-adc-mean-lb-ub: ", self._id, sep, self._cnt, sep, self._adc,sep, mean, sep, self._lb, sep, self._ub)
