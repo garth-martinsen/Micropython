@@ -49,14 +49,13 @@ class TouchPin:
         if len(self._variants) > n:
             self._variants.pop(0)                                       #when list holds 1 more than _smooth_by, remove the first element to keep the list size at _smooth_by
         if len(self._variants) > 2:
-            sd = math.sqrt(sum(self._variants)/(len(self._variants) -1))
-                
+            sd = math.sqrt(sum(self._variants)/(len(self._variants) -1))             
         return math.floor(mean), math.floor(sd)           # return as truncated ints because adc counts are ints.
+                
                 
     def handle_sample(self, adc):
         '''Samples are handled in one of  two states: {CALIBRATE, DETECT}. The state transistions from CALIBRATE-> DETECT when count >_smooth_by'''
         self._adc = adc
-      
         if type(adc) != int:
             print("Type: ", type(adc))
             return
@@ -71,7 +70,6 @@ class TouchPin:
     def calibrate(self, adc):
         ''' Calibration is complete when sample size > _smooth_by , and also after _cnt > _smooth_by,  for samples within bounds (ie: NON-TOUCH samples)  '''
         self._cnt +=1
-       
         if self._cnt >2:
             mean, sd = self.smooth(self._smooth_by, adc)
             self._lb  = math.floor(mean - 3.5* sd)                                             #bounds: samples > abs(mean +- 3.5 sd) , will be branded as TOUCHes
@@ -89,10 +87,12 @@ class TouchPin:
         else: 
             self.calibrate(adc)        # not a TOUCH, so use adc to improve estimation of thresh
         
+
     def createMeas(self, n_samples, low, high):
         '''This is for testing only. it will generate samples between low and high'''
         for i in range(n_samples):
             self.handle_sample( random.randrange(low*1000, high*1000)/10)
+
 
     def stats(self):
         ''' statistics are all truncated to ints as adc counts cannot be floats'''
@@ -102,5 +102,6 @@ class TouchPin:
         print("Std Dev: ", math.floor(math.sqrt(  sum(self._variants)/len(self._variants  ) )))
         print("LowerBound: ", self._lb)
         print("UpperBound: ", self._ub)
-              
+   
+   
 

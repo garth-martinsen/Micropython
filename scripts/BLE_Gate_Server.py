@@ -11,7 +11,6 @@ import bluetooth
 import struct
 import time
 from ble_gate_advertising import advertising_payload
-
 from micropython import const
 
 _IRQ_CENTRAL_CONNECT = const(1)
