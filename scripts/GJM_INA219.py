@@ -143,5 +143,5 @@ class GJM_INA219 :
 4. Complement the binary result : 000 0010 1111 1111
 5. Add 1 to the Complement to create the Two’s Complement formatted result → 000 0011 0000 0000
 6. Extend the sign and create the 16-bit word: 1000 0011 0000 0000 = 8300h (Remember to extend the sign to all sign-bits, as necessary based on the PGA setting.)
-formula: v =32000; 
+formula: v =32000; value = 0xFFFF & (~v +1) or hex(value)
 '''
