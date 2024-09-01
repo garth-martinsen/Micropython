@@ -4,6 +4,7 @@ from collections import namedtuple
 from machine import RTC
 from micropython import const
 
+# little endian is indicated by placing '<' before format
 # import /Users/garth/Programming/MicroPython/scripts/datetime
 import os
 import sys
@@ -16,8 +17,9 @@ import sys
 # Best fmt: use: 'H6Bi3B4fB' because when packed is is only 33 bytes.
 
 
-fmt= const('H6BI3B4fB')  # 1 u_short, 6 ushort, 1 u_int, 3 u_char, 4 float, 1u_short
+fmt= const('<H6BI3B4fB')  # 1 u_short, 6 ushort, 1 u_int, 3 u_char, 4 float, 1u_short
 
+print("packing format: ", fmt)
 print("Endian: ", sys.byteorder)
 
 now = RTC().datetime()
