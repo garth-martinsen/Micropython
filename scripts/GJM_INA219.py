@@ -6,6 +6,7 @@ import struct
 from collections import namedtuple
 
 #Pins for SCL and SDA need PULLUP resistors so they are held high for i2c to work. TheINA219 has two 10k Ω resistors embedded in the chip to provide this.
+#Different esp32s will have different SCL and SDA pins. Below is for esp32 DOIT v1
 SCL=Pin(22)
 SDA=Pin(21)
 
@@ -19,10 +20,11 @@ CALIBRATION_REG=const(0x05)
 Registers = ["CONFIG_REG", "SHUNTVOLTAGE_REG", "BUSVOLTAGE_REG", "POWER_REG", "CURRENT_REG", "CALIBRATION_REG"]
 
 #VALUES
-#Write to Config Reg: 1C5Fh  (7263d)
+#Write to Config Reg:  0x199Fh  6559d                        # old: 1C5Fh  (7263d)
 #Write to Calib Reg:  1053h  (4179d) 
-CONFIG=0X1C5F  
+CONFIG=0x199F           # 0x199Fh ==  6559d
 CALIB = 0X1053
+RESET= 0x999F            # Same as CONFIG with bit 15 set to 1
 fmt = '<h'  #unsigned Short will handle 2 bytes (16 bit word, little endian)
 
 MEASUREMENTS = namedtuple("MEASUREMENTS",("shunt_volts","bus_volts","supply_volts","power_watts","current_amps"))
@@ -39,7 +41,12 @@ def show_attributes(self ):
     print("Values of pins for SCL: ", SCL.value(), " SDA: ",  SDA.value())
     print("I2C Device address: ",self.address)
     print("Addresses of Registers: ", self.show_registers_addresses())
- 
+    
+def init():
+    ina=GJM_INA219(SCL, SDA)
+    ina.set_register(CONFIG_REG, CONFIG)
+    ina.set_register(CALIBRATION_REG, CALIB)
+    return ina
     
 class GJM_INA219 :
     def __init__(self, SCL, SDA):
@@ -112,7 +119,7 @@ class GJM_INA219 :
     
     def reset(self):
         '''Bit 15 is Reset Bit. Setting this bit to '1' generates a system reset that is the same as power-on reset. This resets all registers to default values; this bit self-clears.'''
-        self.set_register(CONFIG_REG, CONFIG | 1<<15)
+        self.set_register(CONFIG_REG, 0x399F)           #RESET = 0x399F
                 
     def esp32_type(self):
         print(" esp32 Unique_id : ",  machine.unique_id() )
@@ -136,6 +143,15 @@ class GJM_INA219 :
         print(" input2== output2: ", input2== output2)
         print("Difference between input and output: ", hex(input2-output2))
         
+    def show_registers(self):
+        for i in range(6):
+            print( Registers[i] , " : ", self.read_register(i))
+            
+ 
+    
+    
+             
+     
         '''Example: For a value of VSHUNT = –320 mV:
 1. Take the absolute value (include accuracy to 0.01 mV) → 320.00
 2. Translate this number to a whole decimal number → 32000
