@@ -7,7 +7,7 @@ import logging
 from machine import SoftI2C as SI2C
 from machine import Pin
 import errno
-from INA219 import INA219
+from GJM_INA219 import GJM_INA219 as INA219
 
 def show_parameters(ina):
     print("Measuring voltage, current, and power with: ...")
@@ -37,7 +37,7 @@ SDA=Pin(22)
 i2c=SI2C(  SCL,SDA, freq=400000 )
 #i2c.start()
 # __init__( shunt_ohms, max_expected_amps=None, busnum=None, address=__ADDRESS,   log_level=logging.DEBUG):
-ina219 =  INA219(0.1, 3.2)
+ina219 =  INA219(SCL, SDA)
           
           
 ina219._i2c=i2c

@@ -23,13 +23,13 @@ Registers = ["CONFIG_REG", "SHUNTVOLTAGE_REG", "BUSVOLTAGE_REG", "POWER_REG", "C
 #Write to Config Reg:  0x199Fh  6559d                        # old: 1C5Fh  (7263d)
 #Write to Calib Reg:  1053h  (4179d) 
 CONFIG=0x199F           # 0x199Fh ==  6559d
-CALIB = 0X1053
+CALIB = 0X1053            # 0X1053 ==  4179d
 RESET= 0x999F            # Same as CONFIG with bit 15 set to 1
 fmt = '<h'  #unsigned Short will handle 2 bytes (16 bit word, little endian)
 
 MEASUREMENTS = namedtuple("MEASUREMENTS",("shunt_volts","bus_volts","supply_volts","power_watts","current_amps"))
 __BUS_RANGE = [16, 32]  # two choices for FSR of Bus; When BUS_FSR=0, the FSR is 16V
-BUS_FSR=0
+
 BUS_LSB=4e-3  #4mV
 SHUNT_LSB= 9.8e-6  # 9.80 µV = 98e-6 A* 0.1Ω
 CURRENT_LSB = const(98e-6)  #amps/bit
@@ -41,17 +41,13 @@ def show_attributes(self ):
     print("Values of pins for SCL: ", SCL.value(), " SDA: ",  SDA.value())
     print("I2C Device address: ",self.address)
     print("Addresses of Registers: ", self.show_registers_addresses())
-    
-def init():
-    ina=GJM_INA219(SCL, SDA)
-    ina.set_register(CONFIG_REG, CONFIG)
-    ina.set_register(CALIBRATION_REG, CALIB)
-    return ina
-    
+
 class GJM_INA219 :
-    def __init__(self, SCL, SDA):
+    def __init__(self):
         self.i2c= self._create_i2c(SCL,SDA)
         self.addr = int(self._get_device_address())
+        self.set_register(CONFIG_REG, CONFIG)
+        self.set_register(CALIBRATION_REG, CALIB)
         
     def _get_device_address(self):
         ''' A scan for devices returns a List of integers. Assume only one for now and adjust later if needed.'''
@@ -125,28 +121,30 @@ class GJM_INA219 :
         print(" esp32 Unique_id : ",  machine.unique_id() )
         
     def theBug(self):
-        '''Store 0x1C5F in Config_reg , read it back out and unpack it to see if the value is correctly stored.'''
-        #TODO: Fix bug that saves 0x1C5F to CONFIG Register and later returns 0x1C1F, short by 0x40 , why ?
-        print("First show that packing and unpacking a value does not cause the error.")
-        input1 = 0x1C5F
+        '''Store CONFIG in Config_reg , read it back out and unpack it to see if the value is correctly stored.'''
+        #TODO: Fix bug that saves CONFIG to CONFIG Register and later returns !CONFIG, short by 0x40 , why ?
+        print("First show that packing and unpacking CONFIG does not cause the error.")
+        input1 = input2 = CONFIG
         bts=struct.pack(fmt, input1)
         output1= struct.unpack(fmt, bts)[0]
         print("inputValue, packedValue, unpackedValue: ",input1,", " ,bts,", " ,output1)
         print(" input1 == output1: ", input1== output1)
         print("-------------------------------")
-        print("Now show what happens when value is stored in CONFIG_Reg, read from CONFIG_REG and unpacked...")
-        input2= 0x1C5F
+        print("Then show that writing CONFIG to CONFIG_REG, retrieving it from CONFIG_REG and unpacking it causes the error.")
         self.set_register(CONFIG_REG, input2)
         output2 = self.read_register(CONFIG_REG)
         bts2 =  self.i2c.readfrom_mem(self.addr, CONFIG_REG, 2)
         print(" Config_Register: inputValue, packed value returned,   unpackedValue: ",input2, ", " , bts2, ", ", output2)
         print(" input2== output2: ", input2== output2)
-        print("Difference between input and output: ", hex(input2-output2))
+        print("Difference between input and output: ", hex(input2-output2), 'h', input2-output2,"d")
         
-    def show_registers(self):
+    def show_register_values(self):
         for i in range(6):
             print( Registers[i] , " : ", self.read_register(i))
             
+    def is_ready(self):
+        bvr = self.read_register(BUSVOLTAGE_REG)
+        return 2&bvr >0           
  
     
     

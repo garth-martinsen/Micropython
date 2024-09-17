@@ -14,11 +14,15 @@ def dts_string(tpl):
     dtstr += str(tpl[5])+":"
     dtstr += str(tpl[6])+"."
     dtstr += str(tpl[7])
-   
     return dtstr
-rtc=RTC()
-now =rtc.datetime()
-print(now)
-# for t in now:
-#     print(t)
-print(dts_string(now))
+
+
+def get_date_time_as_string():
+    '''Formats date time as a string: eg:  '''
+    return dts_string(get_date_time_as_tuple())
+
+    
+ def get_date_time_as_tuple():
+     '''Returns the datatime as a 7-tuple'''
+     return RTC().datetime()
+        
