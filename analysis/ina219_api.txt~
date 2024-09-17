@@ -1,0 +1,113 @@
+object <INA219 object at 3ffd1870> is of type INA219
+  __module__ -- INA219
+  __qualname__ -- INA219
+  __ADDRESS -- 64
+  __SHUNT_MILLIVOLTS_LSB -- 0.01
+  __BUS_MILLIVOLTS_LSB -- 4
+  __MAX_CALIBRATION_VALUE -- 65534
+  __CALIBRATION_FACTOR -- 0.04096
+  __CONT_SH_BUS -- 7
+  __LOG_FORMAT -- %(asctime)s - %(levelname)s - INA219 %(message)s
+
+  __REG_CONFIG --       0
+  __REG_SHUNTVOLTAGE -- 1
+  __REG_BUSVOLTAGE --   2
+  __REG_POWER --        3
+  __REG_CURRENT --      4
+  __REG_CALIBRATION --  5
+
+  __init__ -- <function __init__ at 0x3ffd1d00>
+  configure -- <function configure at 0x3ffd1d40>
+  _configure -- <function _configure at 0x3ffd1e30>
+  shunt_voltage -- <function shunt_voltage at 0x3ffd1da0>
+  voltage -- <function voltage at 0x3ffd1d60>
+  supply_voltage -- <function supply_voltage at 0x3ffd1d70>
+  current -- <function current at 0x3ffd1d80>
+  power -- <function power at 0x3ffd1d90>
+
+REGISTERS:
+  _configuration_register -- <function _configuration_register at 0x3ffd1ec0>
+  _read_configuration -- <function _read_configuration at 0x3ffd1fd0>
+  _shunt_voltage_register -- <function _shunt_voltage_register at 0x3ffd2060>
+  _voltage_register -- <function _voltage_register at 0x3ffd2030>
+  _current_register -- <function _current_register at 0x3ffd2050>
+  _power_register -- <function _power_register at 0x3ffd2070>
+  _calibration_register -- <function _calibration_register at 0x3ffd2010>
+
+  is_conversion_ready -- <function is_conversion_ready at 0x3ffd1df0>
+  reset -- <function reset at 0x3ffd1de0>
+  sleep -- <function sleep at 0x3ffd1db0>
+  wake -- <function wake at 0x3ffd1dc0>
+  __read_register -- <function __read_register at 0x3ffd20b0>
+  __write_register -- <function __write_register at 0x3ffd2090>
+  _read_gain -- <function _read_gain at 0x3ffd1ff0>
+
+  _read_voltage_register -- <function _read_voltage_register at 0x3ffd2040>
+  _determine_current_lsb -- <function _determine_current_lsb at 0x3ffd1e50>
+  _configure_gain -- <function _configure_gain at 0x3ffd2000>
+  _determine_gain -- <function _determine_gain at 0x3ffd1e10>
+  _increase_gain -- <function _increase_gain at 0x3ffd1e20>
+
+  _has_current_overflow -- <function _has_current_overflow at 0x3ffd2020>
+  current_overflow -- <function current_overflow at 0x3ffd1dd0>
+  _handle_current_overflow -- <function _handle_current_overflow at 0x3ffd1e00>
+
+  _calculate_min_current_lsb -- <function _calculate_min_current_lsb at 0x3ffd1fe0>
+  __validate_voltage_range -- <function __validate_voltage_range at 0x3ffd2080>
+  __to_bytes -- <function __to_bytes at 0x3ffd20d0>
+  __binary_as_string -- <function __binary_as_string at 0x3ffd20e0>
+  __max_expected_amps_to_string -- <function __max_expected_amps_to_string at 0x3ffd20f0>
+  _calibrate -- <function _calibrate at 0x3ffd1ea0>
+
+
+ERROR MESSAGES:
+  __VOLT_ERR_MSG -- Invalid voltage range, must be one of: RANGE_16V, RANGE_32V
+  __RNG_ERR_MSG -- Expected amps %.2fA, out of range, use a lower value shunt resistor
+  __AMP_ERR_MSG -- Expected current %.3fA is greater than max possible current %.3fA
+  __CNVR -- 2
+
+  ADC_9BIT -- 0
+  ADC_10BIT -- 1
+  ADC_11BIT -- 2
+  ADC_12BIT -- 3
+  ADC_2SAMP -- 9
+  ADC_4SAMP -- 10
+  ADC_8SAMP -- 11
+  ADC_16SAMP -- 12
+  ADC_32SAMP -- 13
+  ADC_64SAMP -- 14
+  ADC_128SAMP -- 15
+
+  __BUS_RANGE -- [16, 32]
+  RANGE_16V -- 0
+  RANGE_32V -- 1
+  __CURRENT_LSB_FACTOR -- 32800
+  __LOG_MSG_1 -- shunt ohms: %.3f, bus max volts: %d, shunt volts max: %.2f%s, bus ADC: %d, shunt ADC: %d
+  __LOG_MSG_2 -- calibrate called with: bus max volts: %dV, max shunt volts: %.2fV%s
+  __LOG_MSG_3 -- Current overflow detected - attempting to increase gain
+  __BRNG -- 13
+  __PG0 -- 11
+  __PG1 -- 12
+
+Gain and SHUNT FSR
+  GAIN_AUTO -- -1
+  GAIN_2_80MV -- 1
+  GAIN_4_160MV -- 2
+  GAIN_8_320MV -- 3
+
+Bits :
+  __OVF -- 1
+  __RST -- 15
+  __SADC1 -- 3
+  __SADC2 -- 4
+  __SADC3 -- 5
+  __SADC4 -- 6
+
+  __BADC1 -- 7
+  __BADC2 -- 8
+  __BADC3 -- 9
+  __BADC4 -- 10
+
+  __MODE1 -- 0
+  __MODE2 -- 1
+  __MODE3 -- 2
